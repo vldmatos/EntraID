@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.Graph;
 using System.Diagnostics.Metrics;
 using System.Text;
 using System.Text.Json;
+using Microsoft.Identity.Web;
 
 namespace API
 {
@@ -9,32 +11,18 @@ namespace API
     {
         public static IEndpointRouteBuilder MapEndpoint(this IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapGet("/informations",
-                                (HttpContext httpContext) =>
-                                {
-                                    return "teste";
-                                })
-            .WithName("Informations")
-            .WithTags("Informations")
-            .WithOpenApi();
-
-            endpoints.MapGet("/user", [Authorize] (HttpContext context) =>
+            endpoints.MapGet("/me", (GraphServiceClient graphClient) =>
             {
-                var user = context.User;
-
-                if (user is null)
-                    return Results.Unauthorized();
-
-                return Results.Ok(new
+                try
                 {
-                    Name = user.Identity?.Name,
-                    TenantId = user.FindFirst("tid")?.Value,
-                    Email = user.FindFirst("preferred_username")?.Value
-                });
-            })
-            .WithName("User")
-            .WithTags("User")
-            .WithOpenApi();
+                    var user = graphClient.Me;
+                    return Results.Ok(user);
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(ex.Message);
+                }
+            }).RequireAuthorization();
 
             return endpoints;
         }

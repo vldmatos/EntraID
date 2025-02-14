@@ -11,14 +11,11 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
     <PackageReference Include="Microsoft.Identity.Web" Version="3.7.0" />
+    <PackageReference Include="Microsoft.Identity.Web.MicrosoftGraph" Version="3.7.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Configurations\Configurations.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Endpoints\" />
   </ItemGroup>
 
 </Project>

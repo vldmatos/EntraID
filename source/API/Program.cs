@@ -8,13 +8,26 @@ builder.AddServiceDefaults();
 builder.Services.AddOpenApi();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+                .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"))
+                .EnableTokenAcquisitionToCallDownstreamApi()
+                .AddMicrosoftGraph(builder.Configuration.GetSection("MicrosoftGraph"))
+                .AddInMemoryTokenCaches();
 
-builder.Services.AddAuthorization();
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("BlazorPolicy", policy =>
+    {
+        policy.WithOrigins("https://blazor")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
+    });
+});
 
-
-
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
 
 var application = builder.Build();
 
@@ -25,10 +38,7 @@ if (application.Environment.IsDevelopment())
     application.MapOpenApi();
 }
 
-application.UseCors(policy => policy
-           .AllowAnyOrigin()
-           .AllowAnyMethod()
-           .AllowAnyHeader());
+application.UseCors("BlazorPolicy");
 
 application.UseAuthentication();
 application.UseAuthorization();
