@@ -5,6 +5,7 @@
     <Authorized>
         @context.User.Identity?.Name!
         <button class="nav-link btn btn-link" @onclick="BeginLogOut">Log out</button>
+        <a href="/devices">show devices data</a>
     </Authorized>
     <NotAuthorized>
         <a href="authentication/login">Log in</a>

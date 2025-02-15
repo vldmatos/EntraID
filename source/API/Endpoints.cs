@@ -4,6 +4,7 @@ using System.Diagnostics.Metrics;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Identity.Web;
+using Microsoft.EntityFrameworkCore;
 
 namespace API
 {
@@ -11,11 +12,14 @@ namespace API
     {
         public static IEndpointRouteBuilder MapEndpoints(this IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapGet("/data", () =>
+            endpoints.MapGet("/devices", (DataContext dataContext) =>
             {
                 try
                 {
-                    return Results.Ok("DATA!!!!");
+                    var devices = dataContext.Devices.AsNoTracking()
+                                                     .ToList();
+
+                    return Results.Ok(devices);
                 }
                 catch (Exception ex)
                 {

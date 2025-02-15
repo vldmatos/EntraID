@@ -4,19 +4,27 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	<IsAspireSharedProject>true</IsAspireSharedProject>	  
+	<IsAspireSharedProject>true</IsAspireSharedProject>
+	<UserSecretsId>a76a1050-37ba-4302-bdf1-c469ca10709b</UserSecretsId>	  
   </PropertyGroup>
 
   <ItemGroup>
 	  <FrameworkReference Include="Microsoft.AspNetCore.App" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.2" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.2" />
 
-	  <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.2.0" />
 	  <PackageReference Include="Microsoft.Extensions.ServiceDiscovery" Version="9.0.0" />
-	  <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.9.0" />
-	  <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.9.0" />
-	  <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
-	  <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0" />
-	  <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.9.0" />
+	  <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.11.1" />
+	  <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.11.1" />
+	  <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.11.0" />
+	  <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.11.0" />
+	  <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
 </Project>

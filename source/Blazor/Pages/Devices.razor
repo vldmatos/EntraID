@@ -1,0 +1,55 @@
+﻿@page "/devices"
+
+@attribute [Authorize]
+
+@inject HttpClient _httpClient
+@inject IAccessTokenProvider _accessTokenProvider
+
+<PageTitle>Devices</PageTitle>
+
+<h1>Devices Data</h1>
+<p>This componet get data devices from API with authorizaton scope</p>
+
+<h3>Device List</h3>
+
+@if (devices == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Signal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var device in devices)
+            {
+                <tr>
+                    <td>@device.Name</td>
+                    <td>@device.Signal.ToString("F3")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+
+@code 
+{
+    private List<Device>? devices;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var tokenResult = await _accessTokenProvider.RequestAccessToken();
+		if (tokenResult.TryGetToken(out var token))
+		{
+			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Value);
+			devices = await _httpClient.GetFromJsonAsync<List<Device>>("devices");
+		}
+	}
+}
