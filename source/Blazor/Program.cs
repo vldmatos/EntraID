@@ -1,38 +1,21 @@
-using Blazor.Components;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Blazor;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebAssemblyHostBuilder.CreateDefault(args);
+builder.RootComponents.Add<App>("#app");
+builder.RootComponents.Add<HeadOutlet>("head::after");
 
-builder.AddServiceDefaults();
+builder.Services.AddHttpClient("api", client => client.BaseAddress = new Uri("https://localhost:7213"))
+                .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
 
-// Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
+builder.Services.AddScoped(scope => scope.GetRequiredService<IHttpClientFactory>().CreateClient("api"));
 
-var app = builder.Build();
-
-app.MapDefaultEndpoints();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+builder.Services.AddMsalAuthentication(options =>
 {
-    app.UseWebAssemblyDebugging();
-}
-else
-{
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+    builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
+    options.ProviderOptions.DefaultAccessTokenScopes.Add("api://14392d7b-1d39-4cf9-bcdd-2385f6135be8/API.Access");
+});
 
-app.UseHttpsRedirection();
-
-
-app.UseAntiforgery();
-
-app.MapStaticAssets();
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode()
-    .AddInteractiveWebAssemblyRenderMode();
-
-app.Run();
+await builder.Build().RunAsync();

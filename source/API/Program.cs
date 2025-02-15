@@ -13,38 +13,27 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftGraph(builder.Configuration.GetSection("MicrosoftGraph"))
                 .AddInMemoryTokenCaches();
 
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("BlazorPolicy", policy =>
+    options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("https://blazor")
-              .AllowAnyMethod()
+        policy.AllowAnyMethod()
               .AllowAnyHeader()
-              .AllowCredentials();
+              .AllowAnyOrigin();
     });
 });
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-});
 
 var application = builder.Build();
 
-application.MapDefaultEndpoints();
+application.MapDefaultEndpoints()
+           .MapEndpoints()
+           .MapOpenApi();
 
-if (application.Environment.IsDevelopment())
-{
-    application.MapOpenApi();
-}
-
-application.UseCors("BlazorPolicy");
-
-application.UseAuthentication();
-application.UseAuthorization();
-
-application.UseHttpsRedirection();
-
-application.MapEndpoint();
+application.UseCors()
+           .UseAuthentication()
+           .UseAuthorization()
+           .UseHttpsRedirection();
 
 application.Run();

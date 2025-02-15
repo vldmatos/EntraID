@@ -1,0 +1,33 @@
+﻿@page "/data"
+@using System.Net.Http.Headers
+
+@attribute [Authorize]
+
+@inject HttpClient _httpClient
+@inject IAccessTokenProvider _accessTokenProvider
+
+<PageTitle>Data</PageTitle>
+
+<h1>Data</h1>
+<p>This componet get data from API with authorizaton scope</p>
+
+@if (fromAPI != null)
+{
+	<p>@fromAPI</p>
+}
+
+
+@code 
+{
+	private string? fromAPI;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var tokenResult = await _accessTokenProvider.RequestAccessToken();
+		if (tokenResult.TryGetToken(out var token))
+		{
+			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Value);
+			fromAPI = await _httpClient.GetStringAsync("data");
+		}
+	}
+}

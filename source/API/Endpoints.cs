@@ -9,20 +9,21 @@ namespace API
 {
     public static class Endpoints
     {
-        public static IEndpointRouteBuilder MapEndpoint(this IEndpointRouteBuilder endpoints)
+        public static IEndpointRouteBuilder MapEndpoints(this IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapGet("/me", (GraphServiceClient graphClient) =>
+            endpoints.MapGet("/data", () =>
             {
                 try
                 {
-                    var user = graphClient.Me;
-                    return Results.Ok(user);
+                    return Results.Ok("DATA!!!!");
                 }
                 catch (Exception ex)
                 {
                     return Results.Problem(ex.Message);
                 }
-            }).RequireAuthorization();
+            })
+            .RequireScope("API.Access")
+            .RequireAuthorization();
 
             return endpoints;
         }
