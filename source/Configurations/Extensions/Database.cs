@@ -20,7 +20,7 @@ namespace Configurations.Extensions
 
     public static class DbInitializer
     {
-        private const int total = 10;
+        private const int total = 6;
         public static void Initialize(DataContext context)
         {
             if (context.Devices.Any())

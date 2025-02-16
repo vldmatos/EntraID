@@ -27,10 +27,7 @@ namespace API
             })
             .WithTags("Devices")
             .RequireScope("API.Access")
-            .RequireAuthorization();
-
-
-           
+            .RequireAuthorization();          
 
             return endpoints;
         }

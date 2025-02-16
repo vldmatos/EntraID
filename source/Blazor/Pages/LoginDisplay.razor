@@ -1,0 +1,58 @@
+﻿
+<AuthorizeView>
+    <Authorized>
+        <main class="min-h-screen flex flex-col items-center justify-center space-y-6">               
+            <div class="w-full max-w-md mx-auto px-4">
+                <div class="bg-white rounded-lg shadow-xl p-8">                   
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold text-gray-900">
+                            Wellcome, <span class="text-blue-600">@context.User.Identity?.Name!</span>
+                        </h2>
+                    </div>
+                    <div class="flex justify-center mb-8">
+                        <a href="/devices">
+                        <button class="flex items-center justify-center gap-3 bg-blue-600 text-white rounded-lg px-6 py-3 hover:bg-blue-700 transition-colors shadow-md">
+                            <i class="fas fa-laptop text-xl"></i>
+                            <span class="font-semibold">View Data Devices (Authorized)</span>
+                        </button>
+                        </a>
+                    </div>
+                    <Logout></Logout>
+                </div>
+            </div>
+        </main>
+    </Authorized>
+    <NotAuthorized>
+        <main class="min-h-screen flex flex-col items-center justify-center">
+            <div class="w-full max-w-md mx-auto px-4">
+               <div class="bg-white rounded-lg shadow-xl p-8 text-center">
+                    <div class="mb-8">
+                        <h2 class="mt-4 text-2xl font-bold text-gray-900">Vladimir Matos</h2>
+                        <p class="mt-2 text-gray-600">Welcome to the demo application</p>
+                    </div>
+
+                    <div class="flex justify-center">
+                        <a href="/authentication/login">
+                            <button class="inline-flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-lg px-6 py-3 text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft Logo" class="w-6 h-6" />
+                                <span class="text-sm font-semibold">Microsoft</span>
+                            </button>
+                        </a>
+                    </div>
+
+                    <p class="mt-6 text-sm text-gray-600">
+                        By logging in, you agree to our
+                        <a href="#" class="font-medium text-blue-600 hover:text-blue-500">Terms of Service</a>
+                        and
+                        <a href="#" class="font-medium text-blue-600 hover:text-blue-500">Privacy Policy</a>
+                    </p>
+                </div>
+
+                <p class="mt-6 text-center text-sm text-gray-600">
+                    Need help?
+                    <a href="#" class="font-medium text-blue-600 hover:text-blue-500">Contact Support</a>
+                </p>
+            </div>
+        </main>
+    </NotAuthorized>
+</AuthorizeView>

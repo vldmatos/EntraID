@@ -7,34 +7,105 @@
 
 <PageTitle>Devices</PageTitle>
 
-<h1>Devices Data</h1>
-<p>This component gets data devices from API with authorization scope</p>
-
-<h3>Device List</h3>
-
 @if (devices == null)
 {
     <p>Loading...</p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Signal</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var device in devices)
-            {
-                <tr>
-                    <td>@device.Name</td>
-                    <td>@device.Signal.ToString("F3")</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="min-h-screen p-6">
+        <div class="max-w-4xl mx-auto space-y-6">
+
+            <section class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-user-circle"></i>
+                    Profile Information
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-3">
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Display Name</span>
+                            <span class="font-medium">John Doe</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Country</span>
+                            <span class="font-medium">United States</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Surname</span>
+                            <span class="font-medium">Doe</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Mail</span>
+                            <span class="font-medium">john.doe@company.com</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">User Principal Name</span>
+                            <span class="font-medium">john.doe@company.com</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Job Title</span>
+                            <span class="font-medium">Software Engineer</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Mobile Phone</span>
+                            <span class="font-medium">+1 (555) 123-4567</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Office Location</span>
+                            <span class="font-medium">Building A, Floor 3</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Department</span>
+                            <span class="font-medium">Technology</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-laptop"></i>
+                    Real-time Device Data
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Name
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Signal
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach (var device in devices)
+                            {
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-sm text-gray-900">@device.Name</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            @device.Signal.ToString("F3")
+                                        </span>
+                                    </td>
+                                </tr>
+                            }                            
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="flex justify-center">
+               <Logout></Logout>
+            </section>
+        </div>
+    </div>
 }
 
 @code
