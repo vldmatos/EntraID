@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.Graph;
-using System.Diagnostics.Metrics;
-using System.Text;
-using System.Text.Json;
-using Microsoft.Identity.Web;
+﻿using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Web;
+using System.Text.Json;
 
 namespace API
 {
@@ -19,6 +16,8 @@ namespace API
                     var devices = dataContext.Devices.AsNoTracking()
                                                      .ToList();
 
+                    devices.ForEach(device => device.ChangeSignal());
+
                     return Results.Ok(devices);
                 }
                 catch (Exception ex)
@@ -26,8 +25,12 @@ namespace API
                     return Results.Problem(ex.Message);
                 }
             })
+            .WithTags("Devices")
             .RequireScope("API.Access")
             .RequireAuthorization();
+
+
+           
 
             return endpoints;
         }

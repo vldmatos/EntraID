@@ -12,9 +12,9 @@ namespace Domain.Models
 
         public double Signal { get; set; }
 
-        public void ChangeSignal(Random random)
+        public void ChangeSignal()
         {
-            Signal = random.NextDouble();
+            Signal = Random.Shared.NextDouble();
         }
     }
 }

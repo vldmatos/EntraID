@@ -8,7 +8,7 @@
 <PageTitle>Devices</PageTitle>
 
 <h1>Devices Data</h1>
-<p>This componet get data devices from API with authorizaton scope</p>
+<p>This component gets data devices from API with authorization scope</p>
 
 <h3>Device List</h3>
 
@@ -37,19 +37,31 @@ else
     </table>
 }
 
-
-
-@code 
+@code
 {
     private List<Device>? devices;
+    private Timer? timer;
 
-	protected override async Task OnInitializedAsync()
-	{
-		var tokenResult = await _accessTokenProvider.RequestAccessToken();
-		if (tokenResult.TryGetToken(out var token))
-		{
-			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Value);
-			devices = await _httpClient.GetFromJsonAsync<List<Device>>("devices");
-		}
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDevicesAsync();
+        timer = new Timer(async _ => await LoadDevicesAsync(), null, 0, 5000);
+    }
+
+    private async Task LoadDevicesAsync()
+    {
+        var tokenResult = await _accessTokenProvider.RequestAccessToken();
+        if (tokenResult.TryGetToken(out var token))
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Value);
+            devices = await _httpClient.GetFromJsonAsync<List<Device>>("devices");
+
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
 }

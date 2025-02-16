@@ -7,16 +7,14 @@ using Microsoft.Identity.Web;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-builder.Services.AddOpenApi();
+
+builder.Services.AddOpenApi()
+                .AddHealthChecks();
 
 builder.Services.AddDbContext<DataContext>(options => options.UseInMemoryDatabase("DeviceDb"));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"))
-                .EnableTokenAcquisitionToCallDownstreamApi()
-                .AddMicrosoftGraph(builder.Configuration.GetSection("MicrosoftGraph"))
-                .AddInMemoryTokenCaches();
-
+                .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
 builder.Services.AddCors(options =>
 {
