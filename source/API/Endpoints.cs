@@ -1,8 +1,6 @@
 ﻿using Domain.Services;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
-using System.Text.Json;
 
 namespace API
 {
