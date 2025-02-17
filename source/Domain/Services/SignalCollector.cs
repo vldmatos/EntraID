@@ -4,7 +4,7 @@ namespace Domain.Services
 {
     public class SignalCollector
     {
-        public List<Device> Collect(List<Device> devices)
+        public Device[] Collect(Device[] devices)
         {
             foreach (var device in devices)
             {

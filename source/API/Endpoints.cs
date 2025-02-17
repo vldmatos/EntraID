@@ -10,12 +10,12 @@ namespace API
     {
         public static IEndpointRouteBuilder MapEndpoints(this IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapGet("/devices", (SignalCollector signalCollector, DataContext dataContext) =>
+            endpoints.MapGet("/devices", async (SignalCollector signalCollector, DataContext dataContext) =>
             {
                 try
                 {
-                    var devices = dataContext.Devices.AsNoTracking()
-                                                     .ToList();
+                    var devices = await dataContext.Devices.AsNoTracking()
+                                                           .ToArrayAsync();
 
                     devices = signalCollector.Collect(devices);
 
