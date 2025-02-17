@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace Domain.Models
 {
-    public record Profile
-    (
-        string DisplayName,
-        string Country,
-        string Surname,
-        string Mail,
-        string UserPrincipalName,
-        string JobTitle,
-        string MobilePhone,
-        string OfficeLocation,
-        string Department
-    );
+    public class Profile
+    {
+        public string? DisplayName { get; set; }
+        public string? Country { get; set; }
+        public string? Surname { get; set; }
+        public string? Mail { get; set; }
+        public string? UserPrincipalName { get; set; }
+        public string? JobTitle { get; set; }
+        public string? MobilePhone { get; set; }
+        public string? OfficeLocation { get; set; }
+        public string? Department { get; set; }
+    }
 }

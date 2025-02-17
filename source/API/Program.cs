@@ -1,23 +1,40 @@
-using API;
+using API.Endpoints;
+using Azure.Identity;
 using Configurations.Extensions;
 using Domain.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Graph;
 using Microsoft.Identity.Web;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
+
+var azureConfiguration = builder.Configuration.GetSection("AzureAd");
+var graphConfiguration = builder.Configuration.GetSection("MicrosoftGraph");
 
 builder.AddServiceDefaults();
 
 builder.Services.AddOpenApi()
                 .AddHealthChecks();
 
-builder.Services.AddSingleton<SignalCollector>();
-
 builder.Services.AddDbContext<DataContext>(options => options.UseInMemoryDatabase("DeviceDb"));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
+                .AddMicrosoftIdentityWebApi(azureConfiguration)
+                .EnableTokenAcquisitionToCallDownstreamApi()
+                .AddMicrosoftGraph(graphConfiguration)
+                .AddInMemoryTokenCaches();
+
+builder.Services.AddSingleton<SignalCollector>()
+                .AddScoped(serviceProvider =>
+                {
+                    var clientSecretCredential = new ClientSecretCredential(
+                         azureConfiguration.GetSection("TenantID").Value,
+                         azureConfiguration.GetSection("ClientID").Value,
+                         azureConfiguration.GetSection("ClientSecret").Value);
+
+                    return new GraphServiceClient(clientSecretCredential, [graphConfiguration.GetSection("BaseUrl").Value]);
+                });
 
 builder.Services.AddCors(options =>
 {
@@ -34,7 +51,8 @@ var application = builder.Build();
 
 application.CreateDbIfNotExists();
 application.MapDefaultEndpoints()
-           .MapEndpoints()
+           .MapDevicesEndpoints()
+           .MapUserEndpoints()
            .MapOpenApi();
 
 application.UseCors()

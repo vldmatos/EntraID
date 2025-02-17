@@ -1,0 +1,167 @@
+﻿@page "/informations"
+
+@attribute [Authorize]
+
+@inject HttpClient _httpClient
+@inject IAccessTokenProvider _accessTokenProvider
+@inject AuthenticationStateProvider _authenticationStateProvider
+
+<PageTitle>Devices</PageTitle>
+
+@if (devices == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="min-h-screen p-6">
+        <div class="max-w-4xl mx-auto space-y-6">
+
+            <section class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-user-circle"></i>
+                    Profile Information
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-3">
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Display Name</span>
+                            <span class="font-medium">@profile?.DisplayName</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Country</span>
+                            <span class="font-medium">@profile?.Country</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Surname</span>
+                            <span class="font-medium">@profile?.Surname</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Mail</span>
+                            <span class="font-medium">@profile?.Mail</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">User Principal Name</span>
+                            <span class="font-medium">@profile?.UserPrincipalName</span>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Job Title</span>
+                            <span class="font-medium">@profile?.JobTitle</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Mobile Phone</span>
+                            <span class="font-medium">@profile?.MobilePhone</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Office Location</span>
+                            <span class="font-medium">@profile?.OfficeLocation</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Department</span>
+                            <span class="font-medium">@profile?.Department</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                    <i class="fas fa-laptop"></i>
+                    Real-time Device Data
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Name
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Signal
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach (var device in devices)
+                            {
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-sm text-gray-900">@device.Name</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            @device.Signal.ToString("F3")
+                                        </span>
+                                    </td>
+                                </tr>
+                            }                            
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="flex justify-center">
+                <Logout></Logout>
+            </section>
+        </div>
+    </div>
+}
+
+@code
+{
+    private List<Device>? devices;
+    private Profile? profile;
+    private Timer? timer;
+    private String? Token;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var tokenResult = await _accessTokenProvider.RequestAccessToken();
+        if (tokenResult.TryGetToken(out var token))
+            Token = token.Value;
+
+        await LoadDevicesAsync();
+		await LoadProfileAsync();
+
+        timer = new Timer(async _ => await LoadDevicesAsync(), null, 0, 5000);
+    }
+
+    private async Task LoadDevicesAsync()
+    {
+        if (Token is null)
+            return;
+
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+        devices = await _httpClient.GetFromJsonAsync<List<Device>>("devices");
+
+        await InvokeAsync(StateHasChanged);        
+    }
+
+    public async Task LoadProfileAsync()
+	{
+        if (Token is null)
+            return;
+
+        var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        var userEmail = user.Claims.FirstOrDefault(claim =>
+                                                        claim.Type == "preferred_username" ||
+                                                        claim.Type == "email" ||
+                                                        claim.Type == "upn")?.Value;
+
+        if (!string.IsNullOrEmpty(userEmail))
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Token);
+            profile = await _httpClient.GetFromJsonAsync<Profile>($"user?email={Uri.EscapeDataString(userEmail)}");
+            await InvokeAsync(StateHasChanged);
+        }		
+	}
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+}
