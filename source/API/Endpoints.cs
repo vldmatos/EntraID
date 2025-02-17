@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+﻿using Domain.Services;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using System.Text.Json;
@@ -9,14 +10,14 @@ namespace API
     {
         public static IEndpointRouteBuilder MapEndpoints(this IEndpointRouteBuilder endpoints)
         {
-            endpoints.MapGet("/devices", (DataContext dataContext) =>
+            endpoints.MapGet("/devices", (SignalCollector signalCollector, DataContext dataContext) =>
             {
                 try
                 {
                     var devices = dataContext.Devices.AsNoTracking()
                                                      .ToList();
 
-                    devices.ForEach(device => device.ChangeSignal());
+                    devices = signalCollector.Collect(devices);
 
                     return Results.Ok(devices);
                 }

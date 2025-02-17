@@ -4,11 +4,6 @@
     {
         public string? Name { get; set; }
 
-        public double Signal { get; set; }
-
-        public void ChangeSignal()
-        {
-            Signal = Random.Shared.NextDouble();
-        }
+        public double Signal { get; set; }        
     }
 }

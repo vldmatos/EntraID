@@ -1,5 +1,6 @@
 using API;
 using Configurations.Extensions;
+using Domain.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
@@ -10,6 +11,8 @@ builder.AddServiceDefaults();
 
 builder.Services.AddOpenApi()
                 .AddHealthChecks();
+
+builder.Services.AddSingleton<SignalCollector>();
 
 builder.Services.AddDbContext<DataContext>(options => options.UseInMemoryDatabase("DeviceDb"));
 
